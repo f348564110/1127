@@ -1,0 +1,113 @@
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+
+int next1[20],next2[20];
+
+void get_next(int t[],int next[],int n)
+{
+	int i=0,j=-1;
+	next[0]=-1;
+	while(i<n)
+	{ 
+		if(j==-1||t[i]==t[j]) 
+		{
+			i++;
+			j++;
+			next[i]=j;
+		}
+		else
+		{
+			j=next[j];
+		}
+	} 
+}
+
+int Index_KMP(int s[],int t[],int n,int next[],int m) 
+{
+	int i=0,j=0;
+	while(j<n&&i<m)
+	{
+		if(j==-1||s[i]==t[j])
+		{
+			i++;
+			j++;
+		}
+		else{
+			j=next[j];
+		}
+	}
+	return j==n?i-j:-1;
+}
+
+int main()
+{
+	int K,Q,a,b,k,pos,x=1;
+	int i,j,l;
+	int mat[50]={0},sum=0;
+	int check1[8]={2,4,8,3,2,6,1,2},check2[4]={0};
+	scanf("%d",&K);
+	while(K--)
+	{
+		scanf("%d %d %d",&a,&b,&Q);
+		mat[0]=a;
+		mat[1]=b;
+		for(i=1;i<50;)
+		{
+			sum=mat[i]*mat[i-1];
+			j=i+1;
+			l=i+2;
+			if(sum>=10)
+			{
+				mat[j]=sum/10;
+				mat[l]=sum%10;
+				i+=2;
+			}
+			else
+			{
+				mat[j]=sum;
+				i++;
+			}
+		}
+		if(a==5||b==5)
+		{
+			x=2;
+			get_next(check2,next2,4);
+			pos = Index_KMP(mat,check2,4,next2,50); 
+		}
+		if(a==1&&b==1)
+		{
+			x=2;
+		}
+		else
+		{
+			get_next(check1,next1,8);
+			pos = Index_KMP(mat,check1,8,next1,50);
+		}
+		while(Q--)
+		{
+			scanf("%d",&k);
+			if(k>pos)
+			{
+				if(x==1)
+				{
+					printf("%d\n",check1[(k-pos-1)%8]);
+				}
+				else if(x==2)
+				{
+					printf("1\n");
+				}
+				else
+				{
+					printf("%d\n",check2[(k-pos-1)%4]);
+				} 
+			}
+			else
+			{
+				printf("%d\n",mat[k-1]);
+			}
+		}
+	}
+	
+	return 0;
+} 
